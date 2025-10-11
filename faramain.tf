@@ -7,9 +7,9 @@ terraform {
   }
 
   cloud {
-    organization = "FThomas-Pipe" 
+    organization = "FThomas-Pipe"
     workspaces {
-      name = "FaraSpace" 
+      name = "FaraSpace"
     }
   }
 }
