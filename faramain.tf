@@ -7,9 +7,9 @@ terraform {
   }
 
   cloud {
-    organization = "FThomas-Pipe" # remplace par ton vrai nom d’organisation Terraform Cloud
+    organization = "FThomas-Pipe" 
     workspaces {
-      name = "FaraSpace" # le nom exact de ton workspace Terraform Cloud
+      name = "FaraSpace" 
     }
   }
 }
