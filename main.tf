@@ -80,6 +80,8 @@ resource "azurerm_linux_virtual_machine" "fthomas_vm_demo" {
     version   = "latest"
   }
 
+}
+
 #6. Azure Container Instance (execute un conteneur Docker Nginx)
 resource "azurerm_container_group" "nginx_demo" {
   name                = "fthomas-nginx-container-first"
@@ -113,5 +115,3 @@ resource "random_string" "suffix" {
   upper   = false
   special = false
 }
-}
-
