@@ -40,3 +40,43 @@ resource "azurerm_subnet" "subnet_demo" {
   address_prefixes     = ["10.0.1.0/24"]
 }
 
+#4. Network Interface (reliee au subnet existant)
+resource "azurerm_network_interface" "nic_demo" {
+  name                = "nic-demo"
+  location            = azurerm_resource_group.rg_demo.location
+  resource_group_name = azurerm_resource_group.rg_demo.name
+
+  ip_configuration {
+    name                          = "internal"
+    subnet_id                     = azurerm_subnet.subnet_demo.id
+    private_ip_address_allocation = "Dynamic"
+  }
+}
+
+#5. Machine Virtuelle (Ubuntu Linux)
+resource "azurerm_linux_virtual_machine" "vm_demo" {
+  name                = "vm-demo"
+  resource_group_name = azurerm_resource_group.rg_demo.name
+  location            = azurerm_resource_group.rg_demo.location
+  size                = "Standard_B1s"
+  admin_username      = "azureuser"
+
+  network_interface_ids = [
+    azurerm_network_interface.nic_demo.id
+  ]
+
+  admin_password = "DemoPassword123!"  #A changer avant le deploiement(minimum 12 caractères)
+
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+  }
+
+  source_image_reference {
+    publisher = "Canonical"
+    offer     = "0001-com-ubuntu-server-focal"
+    sku       = "20_04-lts"
+    version   = "latest"
+  }
+}
+
