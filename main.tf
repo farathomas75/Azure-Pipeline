@@ -54,8 +54,8 @@ resource "azurerm_network_interface" "nic_demo" {
 }
 
 #5. Machine Virtuelle (Ubuntu Linux)
-resource "azurerm_linux_virtual_machine" "vm_demo" {
-  name                = "vm-demo"
+resource "azurerm_linux_virtual_machine" "fthomas_vm_demo" {
+  name                = "fthomas-vm"
   resource_group_name = azurerm_resource_group.rg_demo.name
   location            = azurerm_resource_group.rg_demo.location
   size                = "Standard_B1s"
@@ -65,7 +65,8 @@ resource "azurerm_linux_virtual_machine" "vm_demo" {
     azurerm_network_interface.nic_demo.id
   ]
 
-  admin_password = "DemoPassword123!"  #A changer avant le deploiement(minimum 12 caractères)
+  admin_password = "Infected123!"  #A changer avant le deploiement(minimum 12 caractères)
+  disable_password_authentication = false  #autorise le mot de passe
 
   os_disk {
     caching              = "ReadWrite"
