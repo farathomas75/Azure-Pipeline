@@ -103,15 +103,4 @@ resource "azurerm_container_group" "nginx_demo" {
 
   ip_address_type = "Public"
   dns_name_label  = "nginx-demo-${random_string.suffix.result}"
-  ports {
-    port     = 80
-    protocol = "TCP"
-  }
-}
-
-# Genere un suffixe aleatoire pour le DNS (evite les doublons)
-resource "random_string" "suffix" {
-  length  = 6
-  upper   = false
-  special = false
 }
