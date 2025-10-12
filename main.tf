@@ -85,8 +85,8 @@ resource "azurerm_linux_virtual_machine" "fthomas_vm_demo" {
 #6. Azure Container Instance (execute un conteneur Docker Nginx)
 resource "azurerm_container_group" "nginx_demo" {
   name                = "fthomas-nginx-container-first"
-  location            = azurerm_resource_group.rg_montreal.location
-  resource_group_name = azurerm_resource_group.rg_canada.name
+  location            = azurerm_resource_group.rg_demo.location
+  resource_group_name = azurerm_resource_group.rg_demo.name
   os_type             = "Linux"
 
   container {
