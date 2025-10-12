@@ -79,5 +79,39 @@ resource "azurerm_linux_virtual_machine" "fthomas_vm_demo" {
     sku       = "20_04-lts"
     version   = "latest"
   }
+
+#6. Azure Container Instance (execute un conteneur Docker Nginx)
+resource "azurerm_container_group" "nginx_demo" {
+  name                = "fthomas-nginx-container-first"
+  location            = azurerm_resource_group.rg_montreal.location
+  resource_group_name = azurerm_resource_group.rg_canada.name
+  os_type             = "Linux"
+
+  container {
+    name   = "nginx"
+    image  = "nginx:latest"
+    cpu    = "0.5"
+    memory = "1.5"
+
+    ports {
+      port     = 80
+      protocol = "TCP"
+    }
+  }
+
+  ip_address_type = "Public"
+  dns_name_label  = "nginx-demo-${random_string.suffix.result}"
+  ports {
+    port     = 80
+    protocol = "TCP"
+  }
+}
+
+# Genere un suffixe aleatoire pour le DNS (evite les doublons)
+resource "random_string" "suffix" {
+  length  = 6
+  upper   = false
+  special = false
+}
 }
 
