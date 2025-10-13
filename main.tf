@@ -121,7 +121,7 @@ resource "azurerm_linux_virtual_machine" "kali_vm" {
 
   admin_ssh_key {
     username   = "fthomaskali"
-    public_key = file("C:/Users/faraq/Azure-Pipeline/keys/id_rsa.pub")  #Vrai chemin du PC local
+    public_key = file("${path.module}/keys/id_rsa.pub")  #Vrai chemin du PC local
   }
 
   source_image_reference {
@@ -145,7 +145,7 @@ resource "azurerm_linux_virtual_machine" "kali_vm" {
 # Output pratique pour SSH
 output "kali_vm_ssh_command" {
   description = "Commande SSH pour se connecter à la VM Kali"
-  value       = "ssh kaliuser@${azurerm_public_ip.kali_public_ip.ip_address}"
+  value       = "ssh fthomaskali@${azurerm_public_ip.kali_public_ip.ip_address}"
 }
 
 
