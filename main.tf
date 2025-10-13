@@ -105,7 +105,7 @@ resource "azurerm_linux_virtual_machine" "kali_vm" {
   location            = azurerm_resource_group.rg_demo.location
   size                = "Standard_B2s"
   admin_username      = "fthomaskali"
-  admin_password      = "var.kali_admin_password"
+  admin_password      = var.kali_admin_password
   network_interface_ids = [
     azurerm_network_interface.kali_nic.id,
   ]
