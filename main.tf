@@ -7,9 +7,9 @@ terraform {
   }
 
   cloud {
-    organization = "FThomas-Pipe"   # Remplace par ton organisation Terraform Cloud
+    organization = "FThomas-Pipe"   # Organisation dans Terraform Cloud
     workspaces {
-      name = "FaraSpace"            # Remplace par ton workspace Terraform Cloud
+      name = "FaraSpace"            # Workspace dans Terraform Cloud
     }
   }
 }
@@ -53,7 +53,7 @@ resource "azurerm_network_interface" "nic_demo" {
   }
 }
 
-#5. Machine Virtuelle (Ubuntu Linux)
+#5.a. Machine Virtuelle (Ubuntu Linux)
 resource "azurerm_linux_virtual_machine" "fthomas_vm_demo" {
   name                = "fthomas-vm"
   resource_group_name = azurerm_resource_group.rg_demo.name
@@ -82,18 +82,85 @@ resource "azurerm_linux_virtual_machine" "fthomas_vm_demo" {
 
 }
 
-#6. Azure Container Instance (execute un conteneur Docker Nginx)
+#5.b. 
+# ---------------------------
+# Machine virtuelle Kali Linux Forensic
+# ---------------------------
+
+resource "azurerm_network_interface" "kali_nic" {
+  name                = "kali-nic"
+  location            = azurerm_resource_group.rg_demo.location
+  resource_group_name = azurerm_resource_group.rg_demo.name
+
+  ip_configuration {
+    name                          = "kali-ipconfig"
+    subnet_id                     = azurerm_subnet.subnet_demo.id
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.kali_public_ip.id
+  }
+}
+
+resource "azurerm_public_ip" "kali_public_ip" {
+  name                = "kali-public-ip"
+  location            = azurerm_resource_group.rg_demo.location
+  resource_group_name = azurerm_resource_group.rg_demo.name
+  allocation_method   = "Dynamic"
+}
+
+resource "azurerm_linux_virtual_machine" "kali_vm" {
+  name                = "fthomas-kali-forensic-vm"
+  resource_group_name = azurerm_resource_group.rg_demo.name
+  location            = azurerm_resource_group.rg_demo.location
+  size                = "Standard_B2s"
+  admin_username      = "fthomaskali"
+  network_interface_ids = [
+    azurerm_network_interface.kali_nic.id,
+  ]
+
+  disable_password_authentication = true
+
+  admin_ssh_key {
+    username   = "fthomaskali"
+    public_key = file("C:/Users/faraq/.ssh/id_rsa.pub")  #Vrai chemin du PC local
+  }
+
+  source_image_reference {
+    publisher = "kali-linux"
+    offer     = "kali"
+    sku       = "kali-2024"
+    version   = "latest"
+  }
+
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+  }
+
+  computer_name  = "fthomaskali-vm"
+  priority       = "Regular"
+  provision_vm_agent = true
+  allow_extension_operations = true
+}
+
+# Output pratique pour SSH
+output "kali_vm_ssh_command" {
+  description = "Commande SSH pour se connecter à la VM Kali"
+  value       = "ssh kaliuser@${azurerm_public_ip.kali_public_ip.ip_address}"
+}
+
+
+#6. # Deploiement du conteneur sur Azure Container Instances
 resource "azurerm_container_group" "nginx_demo" {
-  name                = "fthomas-nginx-container-first"
+  name                = "fthomas-nginx-container-${random_string.suffix.result}"
   location            = azurerm_resource_group.rg_demo.location
   resource_group_name = azurerm_resource_group.rg_demo.name
   os_type             = "Linux"
 
   container {
     name   = "nginx"
-    image  = "nginx:latest"
-    cpu    = "0.5"
-    memory = "1.5"
+    image  = "mcr.microsoft.com/azuredocs/aci-helloworld:latest"  # Image publique fiable
+    cpu    = 1
+    memory = 1.5
 
     ports {
       port     = 80
@@ -102,11 +169,12 @@ resource "azurerm_container_group" "nginx_demo" {
   }
 
   ip_address_type = "Public"
-  dns_name_label  = "nginx-demo-${random_string.suffix.result}"
+  dns_name_label  = "fthomas-nginx-${random_string.suffix.result}"
 }
-# Génère un suffixe aléatoire pour le DNS
+
+# Génération d’un suffixe aléatoire pour le nom DNS
 resource "random_string" "suffix" {
-  length  = 6
+  length  = 5
   upper   = false
   special = false
 }
