@@ -121,7 +121,7 @@ resource "azurerm_linux_virtual_machine" "kali_vm" {
 
   admin_ssh_key {
     username   = "fthomaskali"
-    public_key = file("C:/Users/faraq/.ssh/id_rsa.pub")  #Vrai chemin du PC local
+    public_key = file("C:/Users/faraq/Azure-Pipeline/keys/id_rsa.pub")  #Vrai chemin du PC local
   }
 
   source_image_reference {
