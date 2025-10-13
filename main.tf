@@ -96,15 +96,7 @@ resource "azurerm_network_interface" "kali_nic" {
     name                          = "kali-ipconfig"
     subnet_id                     = azurerm_subnet.subnet_demo.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.kali_public_ip.id
   }
-}
-
-resource "azurerm_public_ip" "kali_public_ip" {
-  name                = "kali-public-ip"
-  location            = azurerm_resource_group.rg_demo.location
-  resource_group_name = azurerm_resource_group.rg_demo.name
-  allocation_method   = "Dynamic"
 }
 
 resource "azurerm_linux_virtual_machine" "kali_vm" {
@@ -113,16 +105,12 @@ resource "azurerm_linux_virtual_machine" "kali_vm" {
   location            = azurerm_resource_group.rg_demo.location
   size                = "Standard_B2s"
   admin_username      = "fthomaskali"
+  admin_password      = var.kali_admin_password
   network_interface_ids = [
     azurerm_network_interface.kali_nic.id,
   ]
 
-  disable_password_authentication = true
-
-  admin_ssh_key {
-    username   = "fthomaskali"
-    public_key = file("${path.module}/keys/id_rsa.pub")  #Vrai chemin du PC local
-  }
+  disable_password_authentication = false
 
   source_image_reference {
     publisher = "kali-linux"
@@ -136,18 +124,11 @@ resource "azurerm_linux_virtual_machine" "kali_vm" {
     storage_account_type = "Standard_LRS"
   }
 
-  computer_name  = "fthomaskali-vm"
-  priority       = "Regular"
-  provision_vm_agent = true
-  allow_extension_operations = true
+  computer_name              = "fthomaskali-vm"
+  priority                   = "Regular"
+  provision_vm_agent          = true
+  allow_extension_operations  = true
 }
-
-# Output pratique pour SSH
-output "kali_vm_ssh_command" {
-  description = "Commande SSH pour se connecter à la VM Kali"
-  value       = "ssh fthomaskali@${azurerm_public_ip.kali_public_ip.ip_address}"
-}
-
 
 #6. # Deploiement du conteneur sur Azure Container Instances
 resource "azurerm_container_group" "nginx_demo" {
