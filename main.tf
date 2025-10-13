@@ -21,7 +21,7 @@ provider "azurerm" {
 #1. Resource Group (deja present)
 resource "azurerm_resource_group" "rg_demo" {
   name     = "rg-terraform-demo"
-  location = "EAST US"
+  location = "eastus"
 }
 
 #2. Virtual Network
