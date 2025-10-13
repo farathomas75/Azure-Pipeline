@@ -100,11 +100,11 @@ resource "azurerm_network_interface" "kali_nic" {
 }
 
 resource "azurerm_linux_virtual_machine" "kali_vm" {
-  name                = "fthomas-kali-forensic-vm"
+  name                = "kali-linux"
   resource_group_name = azurerm_resource_group.rg_demo.name
   location            = azurerm_resource_group.rg_demo.location
   size                = "Standard_B2s"
-  admin_username      = "fthomaskali"
+  admin_username      = "kali"
   admin_password      = var.kali_admin_password
   network_interface_ids = [
     azurerm_network_interface.kali_nic.id,
@@ -125,7 +125,7 @@ resource "azurerm_linux_virtual_machine" "kali_vm" {
     storage_account_type = "Standard_LRS"
   }
 
-  computer_name              = "fthomaskali-vm"
+  computer_name              = "kali-linux"
   priority                   = "Regular"
   provision_vm_agent          = true
   allow_extension_operations  = true
