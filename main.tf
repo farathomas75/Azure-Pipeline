@@ -113,11 +113,12 @@ resource "azurerm_linux_virtual_machine" "kali_vm" {
   disable_password_authentication = false
 
   source_image_reference {
-    publisher = "kali-linux"
-    offer     = "kali"
-    sku       = "kali-2024"
-    version   = "latest"
-  }
+  publisher = "kali-linux"
+  offer     = "kali-linux"
+  sku       = "kali"
+  version   = "latest"
+}
+
 
   os_disk {
     caching              = "ReadWrite"
